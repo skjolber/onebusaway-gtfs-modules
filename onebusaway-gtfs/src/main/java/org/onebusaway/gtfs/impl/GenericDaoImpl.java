@@ -180,7 +180,7 @@ public class GenericDaoImpl implements GenericMutableDao {
         Field field = entityType.getDeclaredField("id");
         if (field != null) {
           Class<?> type = field.getType();
-          if (type.equals(Integer.class) || type.equals(Integer.TYPE))
+          if (type == Integer.class || type.equals(Integer.TYPE))
             return new GeneratedIdHandler();
         }
       } catch (Exception ex) {

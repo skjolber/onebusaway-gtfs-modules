@@ -27,14 +27,19 @@ public class AgencyAndId implements Serializable, Comparable<AgencyAndId> {
   private String agencyId;
 
   private String id;
+  
+  // cache hash for improved performance when used as a lookup key
+  private int hash;
 
   public AgencyAndId() {
-
+    hash = 0;
   }
 
   public AgencyAndId(String agencyId, String id) {
     this.agencyId = agencyId;
     this.id = id;
+    
+    calculateHashCode();
   }
 
   public String getAgencyId() {
@@ -43,6 +48,7 @@ public class AgencyAndId implements Serializable, Comparable<AgencyAndId> {
 
   public void setAgencyId(String agencyId) {
     this.agencyId = agencyId;
+    calculateHashCode();
   }
 
   public String getId() {
@@ -51,6 +57,7 @@ public class AgencyAndId implements Serializable, Comparable<AgencyAndId> {
 
   public void setId(String id) {
     this.id = id;
+    calculateHashCode();
   }
 
   public boolean hasValues() {
@@ -81,11 +88,15 @@ public class AgencyAndId implements Serializable, Comparable<AgencyAndId> {
     }
   }
 
-  @Override
-  public int hashCode() {
+  private void calculateHashCode() {
     int hash = 93;
     if (agencyId != null) hash += agencyId.hashCode();
     if (id != null) hash += id.hashCode();
+    this.hash = hash;
+  }
+  
+  @Override
+  public int hashCode() {
     return hash;
   }
 
