@@ -36,8 +36,6 @@ public class StopTimeFieldMappingFactory implements FieldMappingFactory {
 
   private static DecimalFormat _format = new DecimalFormat("00", new DecimalFormatSymbols(Locale.ENGLISH));
 
-  private static Pattern _pattern = Pattern.compile("^(-{0,1}\\d+):(\\d{2}):(\\d{2})$");
-
   public FieldMapping createFieldMapping(EntitySchemaFactory schemaFactory,
       Class<?> entityType, String csvFieldName, String objFieldName,
       Class<?> objFieldType, boolean required) {
@@ -67,20 +65,32 @@ public class StopTimeFieldMappingFactory implements FieldMappingFactory {
     }
     return m;
   }
-
+  
   public static int getStringAsSeconds(String value) {
-    Matcher m = _pattern.matcher(value);
-    if (!m.matches())
-      throw new InvalidStopTimeException(value);
+    // value must match regexp: ^(-{0,1}\d+):(\d{2}):(\d{2})$
     try {
-      int hours = Integer.parseInt(m.group(1));
-      int minutes = Integer.parseInt(m.group(2));
-      int seconds = Integer.parseInt(m.group(3));
+      int index = 0;
+      while(value.charAt(index) != ':') {
+        index++;
+      }
+      int hours = Integer.parseInt(value, 0, index, 10);
+      index++;
+      
+      int startMinutes = index;
+      
+      while(value.charAt(index) != ':') {
+        index++;
+      }
+      
+      int minutes = Integer.parseInt(value, startMinutes, index, 10);
+      int seconds = Integer.parseInt(value, index + 1, value.length(), 10);
 
       return seconds + 60 * (minutes + 60 * hours);
-    } catch (NumberFormatException ex) {
+      
+    } catch (Exception ex) {
       throw new InvalidStopTimeException(value);
     }
+    
   }
 
   private static class StopTimeFieldMapping extends AbstractFieldMapping
