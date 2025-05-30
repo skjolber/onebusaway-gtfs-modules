@@ -382,7 +382,7 @@ public class GtfsReader extends CsvEntityReader {
         _agencyIdsByEntityClassAndId.put(entityType, agencyIdsByEntityId);
       }
 
-      if (agencyIdsByEntityId.containsKey(id.getId()) && !_overwriteDuplicates) {
+      if (!_overwriteDuplicates && agencyIdsByEntityId.containsKey(id.getId())) {
         throw new DuplicateEntityException(entityType, id);
       }
 
